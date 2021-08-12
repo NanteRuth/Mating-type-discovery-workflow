@@ -1,0 +1,42 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=14
+#PBS -l walltime=80:00:00
+#PBS -q long
+#PBS -o /nlustre/users/nante/dothistroma/masters/mapping_genomes/mating_types/changed_index_fasta
+#PBS -e /nlustre/users/nante/dothistroma/masters/mapping_genomes/mating_types/changed_index_fasta
+#PBS -m abe
+#PBS -M ruth.nante@fabi.up.ac.za
+#PBS -N   change_SRR
+
+cd $PBS_O_WORKDIR
+
+sub=']'
+dir="/nlustre/users/nante/dothistroma/masters/mapping_genomes/All_fasta_files/"
+dir2=/nlustre/users/nante/dothistroma/masters/mapping_genomes/mating_types/changed_index_fasta/
+
+while read Strain Mean SD;
+do
+base=$(basename $Strain "_R1.fastq.gz")
+touch $dir2${base}.fasta
+x=0
+
+File=$dir${base}.fasta 
+
+lines=$(cat $File)
+
+for line in $lines
+do
+if [[ "$line" == *"$sub" ]]
+then
+
+	N="_${x}"
+	line="$line$N" 
+		#let "x=x+1"
+x=$((x+1))
+
+fi
+#echo $line
+echo $line >> $dir2$base.fasta
+done
+
+done < /nlustre/users/nante/dothistroma/masters/mapping_genomes/Assembly_all_masurca/Ruth_dothistroma_info_sheet.txt
